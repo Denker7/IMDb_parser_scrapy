@@ -20,10 +20,30 @@ class MySpider(CrawlSpider):
         item = Film()
         item['film_url'] = response.url
         item['title'] = response.xpath("//div[@class='title_wrapper']/h1/text()").get()
-        # item['genre'] доделать до корректного получения значений
-        item['genre'] = response.xpath("//div[@class='subtext']/a/text()").get()
-        item['rating'] = response.xpath("//div[@class='ratingValue']/strong/text()").get()
-        item['stars'] = response.xpath("//div[@class='credit_summary_item']/a/text()").get()
+        item['genre'] = response.xpath("//div[@class='subtext']/a[position()<last()]/text()").extract()
+        item['rating'] = response.xpath("//span[@itemprop='ratingValue']/text()").get()
+        item['stars'] = response.xpath("//div[@class='plot_summary ']/div[@class='credit_summary_item'][3]/"
+                                       "a[position()<last()]/text()").extract()
         # item['type'] = response.xpath("//div[@class='credit_summary_item']/a/text()").get()
-        item['blocks'] = response.xpath("//div[@id='titleDetails']/div[@class='txt-block']/*/text()").get()
+
+        item['blocksDetailsSites'] = response.xpath(
+            "//div[@id='titleDetails']/div[@class='txt-block'][./h4/text()='Official Sites:']/a/text()").get()
+        item['blocksDetailsCountry'] = response.xpath(
+            "//div[@id='titleDetails']/div[@class='txt-block'][./h4/text()='Country:']/a/text()").extract()
+        item['blocksDetailsLanguage'] = response.xpath(
+            "//div[@id='titleDetails']/div[@class='txt-block'][./h4/text()='Language:']/a/text()").extract()
+        item['blocksOfficeBudget'] = response.xpath(
+            "//div[@id='titleDetails']/div[@class='txt-block'][./h4/text()='Budget:']/text()").extract()
+        item['blocksOfficeWeekendUSA'] = response.xpath(
+            "//div[@id='titleDetails']/div[@class='txt-block'][./h4/text()='Opening Weekend USA:']/text()").extract()
+        item['blocksOfficeWorldwide'] = response.xpath(
+            "//div[@id='titleDetails']/div[@class='txt-block'][./h4/text()='Cumulative Worldwide Gross:']/text()").extract()
+        item['blocksTechnicalRuntime'] = response.xpath(
+            "//div[@id='titleDetails']/div[@class='txt-block'][./h4/text()='Runtime:']/time/text()").extract()
+        item['blocksTechnicalSound'] = response.xpath(
+            "//div[@id='titleDetails']/div[@class='txt-block'][./h4/text()='Sound Mix:']/a/text()").extract()
+        item['blocksTechnicalColor'] = response.xpath(
+            "//div[@id='titleDetails']/div[@class='txt-block'][./h4/text()='Color:']/a/text()").extract()
+        item['blocksTechnicalRatio'] = response.xpath(
+            "//div[@id='titleDetails']/div[@class='txt-block'][./h4/text()='Aspect Ratio:']/text()").extract()
         return item
